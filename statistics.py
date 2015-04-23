@@ -82,3 +82,5 @@ for i in range(0, 20):                                                         #
 
 q_burobin = q_burobin/(i+1)                                                    #итоговые коэффициенты
 q_cusum = q_cusum/(i+1)
+print('Final Burobin factor: ' + str(q_burobin))
+print('Final CUSUM factor: ' + str(q_cusum))
