@@ -60,7 +60,6 @@ curr_t = -1                                                 #сбрасывае�
 h_curr = 0                                                  #начальный выбор модели
 
 def generate_number(h_curr, output):                        #функция генератора
-    repers = open('repers_endless.txt', 'a')                #файл точек, где происходит смена модели
     #для смены модели пропорционально вероятности, я решил брать рандомное число, принадлежащее [0,1],
     #разбить этот отрезок на сегменты, равные, собственно, вероятностям и смотреть, в какой сегмент
     #случайное число попало                                          
@@ -73,8 +72,10 @@ def generate_number(h_curr, output):                        #функция ге
         if(p_curr >= factor):
             if(h_curr != h_next):
                 print('Model change: N', curr_t, h_curr, '-->', h_next)
+                repers = open('repers_endless.txt', 'a')              #файл точек, где происходит смена модели
                 repers.write(str(curr_t) + ' ' + str(h_curr) + '\n')        #конец предыдущего сегмента
                 repers.write(str(curr_t) + ' ' + str(h_next) + '\n')        #начало следующего
+                repers.close()
                 h_curr = h_next
             break
     #цикл формирования отсчета AR(n)-процесса
@@ -93,7 +94,6 @@ def generate_number(h_curr, output):                        #функция ге
     output.write(str(x_curr) + '\n')
     #output.close()
     print(x_curr,'h_curr =',h_curr)
-    repers.close()
     return h_curr                                           #возвращаем текущую модель
     
 ##########################################################################################
@@ -150,8 +150,9 @@ h_t_11 = g_t0                                               #вектор (11) �
 #h_curr = generate_number(h_curr)                            #генерируем первое значение, до проверок
 
 output = open('output_endless.txt', 'a')                    #добавляем в файл вывода
+segmentation = open('segmentation_endless.txt', 'a')        #сегментации
 
-for i in range(0,1000):                                     #3000 - тест, в конце перейти на while(True)
+for i in range(0,2000):                                     #3000 - тест, в конце перейти на while(True)
     h_curr = generate_number(h_curr, output)                        #передача текущей модели в генератор
     d_t0, k_t_curr = d_t(d_t0)                              #получаем k_t(i) и d_t(i)
     K.append(k_t_curr)                                      #добавляем рассчитанный столбец в матрицу K
@@ -209,16 +210,12 @@ for i in range(0,1000):                                     #3000 - тест, в
         H_curr.reverse()                                    #т.к. сегментация была в обратном порядке
         ######тут нужен вывод
         if((len(H) == 0) & (len(H_curr) != 0)):
-            segmentation = open('segmentation_endless.txt', 'a')
             segmentation.write(str(0) + ' ' + str(H_curr[0]) + '\n')
-            segmentation.close()
             H_flag = H_curr[0]
         for t in range(0,len(H_curr)):
             if(H_curr[t] != H_flag):
-                segmentation = open('segmentation_endless.txt', 'a')
                 segmentation.write(str(len(H) + t) + ' ' + str(H_flag) + '\n')
-                segmentation.write(str(len(H) + t) + ' ' + str(H_curr[t]) + '\n')
-                segmentation.close()                
+                segmentation.write(str(len(H) + t) + ' ' + str(H_curr[t]) + '\n')               
                 H_flag = H_curr[t]
         H += H_curr                                         #окончательный построенный отрезок сегментации
         #K_new = []                                          #новая таблица K(т.к. нужно сбросить столбцы)
@@ -236,6 +233,6 @@ output.close()
 repers = open('repers_endless.txt', 'a')
 repers.write(str(curr_t) + ' ' + str(h_curr) + '\n')        #замыкающая точка в файле(на какой модели остановка)
 repers.close()
-segmentation = open('segmentation_endless.txt', 'a')
+#segmentation = open('segmentation_endless.txt', 'a')
 segmentation.write(str(u) + ' ' + str(H[len(H) - 1]) + '\n') #замыкающая точка в файле(на какой модели остановка)
 segmentation.close()
