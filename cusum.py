@@ -35,9 +35,11 @@ def g_t(g_t1, i, j, t):                                     #расчет кум
     
 g_t0 = np.zeros((m,m))                                      #начальная матрица g_t
 T = np.zeros((m,m))                                         #матрица граничных условий
+
 for i in range(0,m):                                        #заполняем граничные условия
     for j in range(0,m):
         T[i][j] = 7
+
 H = np.zeros(len(x))                                        #искомая сегментация
 first_break_flag = False
 segmentation = open('segmentation_cusum.txt', 'w')
@@ -55,9 +57,9 @@ for t in range(2, len(x)):                                  #главный ци
                     H_curr = j
                     first_break_flag = True
                     g_t0 = np.zeros((m,m))                      #обнуляем кумулятивные суммы
-                    segmentation.write(str(0) + ' '+ str(i) + '\n')     #записываем в файл
-                    segmentation.write(str(t) + ' '+ str(i) + '\n')
-                    segmentation.write(str(t) + ' '+ str(j) + '\n')
+                    #segmentation.write(str(2) + ' '+ str(i) + '\n')     #записываем в файл
+                    segmentation.write(str(t-2) + ' '+ str(i) + '\n')
+                    segmentation.write(str(t-2) + ' '+ str(j) + '\n')
                     break
             if(first_break_flag == True):
                 break
@@ -69,12 +71,13 @@ for t in range(2, len(x)):                                  #главный ци
             if(g_t0[H_curr][j] >= T[H_curr][j]):
                 H[t] = j
                 g_t0 = np.zeros((m,m))                          #обнуляем кумулятивные суммы
-                segmentation.write(str(t) + ' ' + str(H_curr) + '\n')
-                segmentation.write(str(t) + ' ' + str(j) + '\n')
+                segmentation.write(str(t-2) + ' ' + str(H_curr) + '\n')
+                segmentation.write(str(t-2) + ' ' + str(j) + '\n')
                 H_curr = j
                 break
             else:
                 H[t] = H_curr
-segmentation.write(str(t+1) + ' ' + str(H_curr) + '\n')
+H = np.delete(H, [0,1])                                             #обрезаем первые 2 элемента
+segmentation.write(str(t-2) + ' ' + str(H_curr) + '\n')
 segmentation.close()
 print('ALL DONE!')

@@ -9,9 +9,9 @@ import subprocess
 import numpy as np
 
 def get_statistics():    
-    subprocess.call('python analyzer_endless.py')                              #запускаем скрипты в нужной
+    #subprocess.call('python analyzer_endless.py')                              #запускаем скрипты в нужной
     print('Iteration...Burobin completed.')
-    subprocess.call('python cusum.py')                                         #очередности
+    #subprocess.call('python cusum.py')                                         #очередности
     print('Iteration...CUSUM completed.')
     
     data = open('repers_endless.txt', 'r')                                     #расшифровываем оригинальную цепь
@@ -66,15 +66,15 @@ def get_statistics():
             q_burobin += 1
         if(cusum_segm[t] == original_segm[t]):
             q_cusum += 1
-    q_burobin = q_burobin/t
-    q_cusum = q_cusum/t
+    q_burobin = q_burobin/(t+1)
+    q_cusum = q_cusum/(t+1)
     
     return q_burobin, q_cusum
  
 q_burobin = 0
 q_cusum = 0   
 
-for i in range(0, 20):                                                         #главный цикл
+for i in range(0, 1):                                                         #главный цикл
     q_burobin_curr, q_cusum_curr = get_statistics()
     q_burobin += q_burobin_curr
     q_cusum += q_cusum_curr
