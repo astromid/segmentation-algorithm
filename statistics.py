@@ -9,9 +9,9 @@ import subprocess
 import numpy as np
 
 def get_statistics():    
-    #subprocess.call('python analyzer_endless.py')                              #запускаем скрипты в нужной
+    subprocess.call('python analyzer_endless.py')                              #запускаем скрипты в нужной
     print('Iteration...Burobin completed.')
-    #subprocess.call('python cusum.py')                                         #очередности
+    subprocess.call('python cusum.py')                                         #очередности
     print('Iteration...CUSUM completed.')
     
     data = open('repers_endless.txt', 'r')                                     #расшифровываем оригинальную цепь
@@ -71,16 +71,16 @@ def get_statistics():
     
     return q_burobin, q_cusum
  
-q_burobin = 0
-q_cusum = 0   
+q_burobin_full = 0
+q_cusum_full = 0   
 
-for i in range(0, 1):                                                         #главный цикл
+for i in range(0, 20000):                                                          #главный цикл
     q_burobin_curr, q_cusum_curr = get_statistics()
-    q_burobin += q_burobin_curr
-    q_cusum += q_cusum_curr
+    q_burobin_full += q_burobin_curr
+    q_cusum_full += q_cusum_curr
     print('Iteration ' + str(i) + ' complete.')
 
-q_burobin = q_burobin/(i+1)                                                    #итоговые коэффициенты
-q_cusum = q_cusum/(i+1)
-print('Final Burobin factor: ' + str(q_burobin))
-print('Final CUSUM factor: ' + str(q_cusum))
+q_burobin_full = q_burobin_full/(i+1)                                          #итоговые коэффициенты
+q_cusum_full = q_cusum_full/(i+1)
+print('Final Burobin factor: ' + str(q_burobin_full))
+print('Final CUSUM factor: ' + str(q_cusum_full))

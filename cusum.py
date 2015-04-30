@@ -30,7 +30,7 @@ def g_t(g_t1, i, j, t):                                     #расчет кум
         summ_i += phi[i][v]*x[t-v]
         summ_j += phi[j][v]*x[t-v]
     L = (x[t] - summ_i)**2 - (x[t] - summ_j)**2
-    g = np.max((0, g_t1 + L))
+    g = np.max([0, g_t1 + L])
     return g                                                #возвращаем рассчитанное значение
     
 g_t0 = np.zeros((m,m))                                      #начальная матрица g_t
@@ -38,12 +38,12 @@ T = np.zeros((m,m))                                         #матрица гр
 
 for i in range(0,m):                                        #заполняем граничные условия
     for j in range(0,m):
-        T[i][j] = 7
+        T[i][j] = 7.2
 
 H = np.zeros(len(x))                                        #искомая сегментация
 first_break_flag = False
 segmentation = open('segmentation_cusum.txt', 'w')
-for t in range(2, len(x)):                                  #главный цикл, начинаем с 2 т.к. 0,1 - рандом
+for t in range(n, len(x)):                                  #главный цикл, начинаем с n т.к. 0,1 - рандом
 #двойной цикл поиска первого момента разладки, потом - фиксированные переходы
     if(first_break_flag == False):
         for i in range(0,m):                                    #запускаем цепочку кумулятивных сумм
@@ -58,8 +58,8 @@ for t in range(2, len(x)):                                  #главный ци
                     first_break_flag = True
                     g_t0 = np.zeros((m,m))                      #обнуляем кумулятивные суммы
                     #segmentation.write(str(2) + ' '+ str(i) + '\n')     #записываем в файл
-                    segmentation.write(str(t-2) + ' '+ str(i) + '\n')
-                    segmentation.write(str(t-2) + ' '+ str(j) + '\n')
+                    segmentation.write(str(t-n) + ' '+ str(i) + '\n')   #t-n - сдвиг из-за первых n рандомных знач.
+                    segmentation.write(str(t-n) + ' '+ str(j) + '\n')
                     break
             if(first_break_flag == True):
                 break
@@ -71,13 +71,13 @@ for t in range(2, len(x)):                                  #главный ци
             if(g_t0[H_curr][j] >= T[H_curr][j]):
                 H[t] = j
                 g_t0 = np.zeros((m,m))                          #обнуляем кумулятивные суммы
-                segmentation.write(str(t-2) + ' ' + str(H_curr) + '\n')
-                segmentation.write(str(t-2) + ' ' + str(j) + '\n')
+                segmentation.write(str(t-n) + ' ' + str(H_curr) + '\n')
+                segmentation.write(str(t-n) + ' ' + str(j) + '\n')
                 H_curr = j
                 break
             else:
                 H[t] = H_curr
-H = np.delete(H, [0,1])                                             #обрезаем первые 2 элемента
+H = np.delete(H, [0,n])                                             #обрезаем первые n элементов
 segmentation.write(str(t-2) + ' ' + str(H_curr) + '\n')
 segmentation.close()
 print('ALL DONE!')
