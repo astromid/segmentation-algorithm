@@ -7,25 +7,31 @@ Created on Tue Apr 21 23:09:58 2015
 
 import numpy as np
 
-phi0 = [0,  1.36,  -0.49]                                    #параметры авторегрессионных моделей
-phi1 = [0,  1.02,  -0.40]                                    #{выкинуты числа, ответственные за влияние шума}
-phi2 = [0,  0.82,  -0.49]
-phi3 = [0,  0,     -0.49]
-phi4 = [0, -0.82,  -0.49]
-phi = np.array([phi0,phi1,phi2,phi3,phi4])
-del phi0, phi1, phi2, phi3, phi4                             #они больше не нужны
+#параметры авторегрессионных моделей
+#{выкинуты числа, ответственные за влияние шума}
+#phi0 = [0,  1.36,  -0.49]
+#phi1 = [0,  1.02,  -0.40]
+phi0 = [0, 0.7777, 0.0, 0.2310, -0.1882, 0.1078, -0.1709, 0.0579, -0.1004, 0.095, 0.0]
+phi1 = [0, 1.5754, -1.9375, 1.8763, -1.5303, 1.1594, -0.9269, 0.5768, -0.4746, 0.1396, -0.1132]
+#phi2 = [0,  0.82,  -0.49]
+#phi3 = [0,  0,     -0.49]
+#phi4 = [0, -0.82,  -0.49]
+#phi = np.array([phi0,phi1,phi2,phi3,phi4])
+phi = np.array([phi0,phi1])
+#del phi0, phi1, phi2, phi3, phi4                             #они больше не нужны
+del phi0, phi1
 
-n = 2                                                        #порядок авторегрессии
-m = 5                                                        #количество различных классов{моделей}
+n = 10                                                       #порядок авторегрессии
+m = 2                                                        #количество различных классов{моделей}
 
-data = open('output_endless.txt', 'r')                      #не забыть, что первые 2 числа - рандом! индексы 0, 1
+data = open('signal_simple_paper_cropped_3.txt', 'r')                      #не забыть, что первые 2 числа - рандом! индексы 0, 1
 x = [float(line.strip()) for line in data]                  #считывание отсчетов из файла
 data.close()
 
 def g_t(g_t1, i, j, t):                                     #расчет кумулятивных сумм
 #g_t1 - предыдущее значение g_t для данных i,j; переход i -> j, t - текущий отсчет
-    summ_i = 0
-    summ_j = 0
+    summ_i = phi[i][0]
+    summ_j = phi[j][0]
     for v in range(1,n+1):                                  #считаем суммы
         summ_i += phi[i][v]*x[t-v]
         summ_j += phi[j][v]*x[t-v]
@@ -38,7 +44,7 @@ T = np.zeros((m,m))                                         #матрица гр
 
 for i in range(0,m):                                        #заполняем граничные условия
     for j in range(0,m):
-        T[i][j] = 7.2
+        T[i][j] = 4000000
 
 H = np.zeros(len(x))                                        #искомая сегментация
 first_break_flag = False
@@ -57,7 +63,6 @@ for t in range(n, len(x)):                                  #главный ци
                     H_curr = j
                     first_break_flag = True
                     g_t0 = np.zeros((m,m))                      #обнуляем кумулятивные суммы
-                    #segmentation.write(str(2) + ' '+ str(i) + '\n')     #записываем в файл
                     segmentation.write(str(t-n) + ' '+ str(i) + '\n')   #t-n - сдвиг из-за первых n рандомных знач.
                     segmentation.write(str(t-n) + ' '+ str(j) + '\n')
                     break

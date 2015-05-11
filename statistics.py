@@ -74,7 +74,7 @@ def get_statistics():
 q_burobin_full = 0
 q_cusum_full = 0   
 
-for i in range(0, 20000):                                                          #главный цикл
+for i in range(0, 1):                                                          #главный цикл
     q_burobin_curr, q_cusum_curr = get_statistics()
     q_burobin_full += q_burobin_curr
     q_cusum_full += q_cusum_curr
